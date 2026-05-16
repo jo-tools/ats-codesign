@@ -86,16 +86,16 @@ RUN curl -sL https://github.com/ebourg/jsign/releases/download/${JSIGN_VERSION}/
 COPY ./scripts /usr/local/bin
 
 # CHMOD JOTOOLS SCRIPTS EXECUTABLE
-RUN chmod 755 /usr/local/bin/ats-codesign.sh \
-	&& chmod 755 /usr/local/bin/ats-codesign-wine.sh \
-	&& chmod 755 /usr/local/bin/ats-codesign.bat \
+RUN chmod 755 /usr/local/bin/aas-codesign.sh \
+	&& chmod 755 /usr/local/bin/aas-codesign-wine.sh \
+	&& chmod 755 /usr/local/bin/aas-codesign.bat \
 	&& chmod 755 /usr/local/bin/pfx-codesign.sh \
 	&& chmod 755 /usr/local/bin/pfx-codesign-wine.sh \
 	&& chmod 755 /usr/local/bin/pfx-codesign.bat \
 	&& chmod 755 /usr/local/bin/iscc.sh
 
 # PREPARE CONTAINER
-RUN mkdir -p /etc/ats-codesign \
+RUN mkdir -p /etc/aas-codesign \
 	&& mkdir -p /etc/pfx-codesign \
 	&& mkdir -p /data
 WORKDIR /data

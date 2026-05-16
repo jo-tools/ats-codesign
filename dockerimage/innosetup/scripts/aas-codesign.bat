@@ -1,18 +1,18 @@
 @ECHO OFF
 
-REM ats-codesign.bat | Parameter %1: file-to-be-signed.exe
+REM aas-codesign.bat | Parameter %1: file-to-be-signed.exe
 REM ******************************************************
 REM
 REM This batch script can be used from InnoSetup to
-REM CodeSign using Azure Trusted Signing.
+REM CodeSign using Azure Artifact Signing.
 REM
 REM InnoSetup is running under wine.
-REM We now want to execute a Linux command: ats-codesign.sh
+REM We now want to execute a Linux command: aas-codesign.sh
 REM
 REM The issue is that cmd /c start /wait will run asychronous :(
 REM This .bat needs to wait until CodeSigning is really finished.
 REM We do this by waiting for a file to be written by
-REM ats-codesign-wine.sh
+REM aas-codesign-wine.sh
 
 SET FILE="%*"
 SET LookForFile="%FILE%.signed"
@@ -22,8 +22,8 @@ set cntr=
 REM Check if result exists (from a previous run)
 IF EXIST %LookForFile% DEL %LookForFile%
 
-REM Launch ats-codesign on Linux (asynchronous)
-cmd /c start /wait /unix /usr/local/bin/ats-codesign-wine.sh "%FILE%"
+REM Launch aas-codesign on Linux (asynchronous)
+cmd /c start /wait /unix /usr/local/bin/aas-codesign-wine.sh "%FILE%"
 
 :CheckForFile
 IF EXIST %LookForFile% GOTO FoundIt

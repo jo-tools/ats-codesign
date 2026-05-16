@@ -23,19 +23,19 @@
 ; Xojo 2024r4.2: Require Windows 8.1 with Update 1
 ; /DcsMinVersion="6.3.9600"
 ; ************************************************************************
-; Enable CodeSigning using Azure Trusted Signing (or .pfx)
-; Note: ATS here doesn't mean to support Azure Trusted Signing only.
+; Enable CodeSigning using Azure Artifact Signing (or .pfx)
+; Note: AAS here doesn't mean to support Azure Artifact Signing only.
 ;       The Parameter just enables that this .iss will use the
-;       Signtool command, which we label "ATS" here.
-;       So calling the .iss will need the CodeSign Script "ATS" defined.
-;       And that might sign with either Azure Trusted Signing or .pfx
+;       Signtool command, which we label "AAS" here.
+;       So calling the .iss will need the CodeSign Script "AAS" defined.
+;       And that might sign with either Azure Artifact Signing or .pfx
 ; ------------------------------------------------------------------------
-; /DcsCodeSignATS
+; /DcsCodeSignAAS
 ;
-; If CodeSigning is enabled: Set CodeSign Tool with label 'ATS'
-; which does the actual codesigning (either with Azure Trusted
+; If CodeSigning is enabled: Set CodeSign Tool with label 'AAS'
+; which does the actual codesigning (either with Azure Artifact
 ; Signing or a .pfx)
-; "/SATS=Z:/usr/local/bin/[ats|pfx]-codesign.bat $f"
+; "/SAAS=Z:/usr/local/bin/[aas|pfx]-codesign.bat $f"
 ; ************************************************************************
 
 
@@ -130,9 +130,9 @@ ChangesAssociations=yes
 
 MinVersion={#csMinVersion}
 
-; Set Signtool only if called with Parameter /DcsCodeSignATS
-#ifdef csCodeSignATS
-  Signtool=ATS
+; Set Signtool only if called with Parameter /DcsCodeSignAAS
+#ifdef csCodeSignAAS
+  Signtool=AAS
 #endif
 ; We don't set SignedUninstaller, but use it's Default value: yes if a SignTool is set, no otherwise
 ; SignedUninstaller=yes

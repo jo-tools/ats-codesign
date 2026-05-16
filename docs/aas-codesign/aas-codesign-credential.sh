@@ -3,7 +3,7 @@
 ###############################################################################################
 # Credential Helper Script | Secret Storage | macOS / Linux                                   #
 ###############################################################################################
-# 1. Place this file in the folder ~/.ats-codesign                                            #
+# 1. Place this file in the folder ~/.aas-codesign                                            #
 # 2. Read the comments below and store your Azure Client Secret                               #
 # 3. Make sure you don't have the Azure Client Secret in plain text in the configuration file #
 #    azure.json - remove it there (or leave it blank in the .json file)                       #
@@ -31,17 +31,17 @@
 # Store the Azure Client Secret in macOS Keychain                                             #
 # In Terminal.app:                                                                            #
 #---------------------------------------------------------------------------------------------#
-# security add-generic-password -s ats-codesign -a ats-azure-client-secret -w [ClientSecret]  #
+# security add-generic-password -s aas-codesign -a aas-azure-client-secret -w [ClientSecret]  #
 ###############################################################################################
 # Open Keychain on macOS to see/edit/delete the entry.                                        #
 # Additional Terminal commands:                                                               #
 #---------------------------------------------------------------------------------------------#
-# Lookup item: security find-generic-password -s ats-codesign -a ats-azure-client-secret -w   #
+# Lookup item: security find-generic-password -s aas-codesign -a aas-azure-client-secret -w   #
 ###############################################################################################
 
 if [[ $OSTYPE == 'darwin'* ]]; then
   # macOS
-  security find-generic-password -s ats-codesign -a ats-azure-client-secret -w
+  security find-generic-password -s aas-codesign -a aas-azure-client-secret -w
   exit $?
 fi
 
@@ -56,16 +56,16 @@ fi
 # Store the Azure Client Secret in GNOME Keyring                                              #
 # In Terminal type in exactly this (don't use your actual client secret here!):               #
 #---------------------------------------------------------------------------------------------#
-# secret-tool store --label="ats-codesign" ats azure-client-secret                            #
+# secret-tool store --label="aas-codesign" aas azure-client-secret                            #
 #---------------------------------------------------------------------------------------------#
 # - when prompted by secret-tool: type in the Azure Client Secret                             #
 ###############################################################################################
 # Additional Terminal commands:                                                               #
 #---------------------------------------------------------------------------------------------#
-# Lookup item: secret-tool lookup ats azure-client-secret                                     #
-# List (all) Stored Secret(s): secret-tool search --all ats azure-client-secret               #
-# Delete Stored Secret: secret-tool clear ats azure-client-secret                             #
+# Lookup item: secret-tool lookup aas azure-client-secret                                     #
+# List (all) Stored Secret(s): secret-tool search --all aas azure-client-secret               #
+# Delete Stored Secret: secret-tool clear aas azure-client-secret                             #
 # Launch GUI (seahorse): seahorse                                                             #
 ###############################################################################################
 
-secret-tool lookup ats azure-client-secret
+secret-tool lookup aas azure-client-secret
