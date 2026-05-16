@@ -5,10 +5,10 @@ The Docker Image is based on Debian and has the following components installed:
   - curl, jq, default-jdk
 - [jsign](https://github.com/ebourg/jsign)  
   Authenticode signing tool in Java
-- `ats-codesign.sh` and `pfx-codesign.sh`  
-  Custom Shell Script used for Windows Code Signing using Azure Trusted Signing or a codesign certificate `.pfx`   
+- `aas-codesign.sh` and `pfx-codesign.sh`  
+  Custom Shell Script used for Windows Code Signing using Azure Artifact Signing or a codesign certificate `.pfx`   
   - Usage:  
-    `ats-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
+    `aas-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
     `pfx-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
   - Documentation: [jsign - Command Line Tool: `[FILE] [PATTERN] [@FILELIST]...`](https://ebourg.github.io/jsign/)
 
@@ -57,13 +57,13 @@ The built Docker Image is available on Docker Hub: [`jotools/codesign`](https://
 
 ## Windows Code Signing 
 
-You can use this Docker Image to do Windows Code Signing using [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing) or with a codesign certificate `.pfx`.
+You can use this Docker Image to do Windows Code Signing using [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/) or with a codesign certificate `.pfx`.
 
 <details>
 
-<summary>Configuration: Azure Trusted Signing</summary>
+<summary>Configuration: Azure Artifact Signing</summary>
 
-### Azure Trusted Signing
+### Azure Artifact Signing
 
 #### Configuration
 
@@ -89,8 +89,8 @@ Create the following two `.json` files on your host machine:
 
 And mount them into the following location when running the Docker Container:  
 ```
-/etc/ats-codesign/azure.json
-/etc/ats-codesign/acs.json
+/etc/aas-codesign/azure.json
+/etc/aas-codesign/acs.json
 ```
 
 Instead of mounting the two `.json` files, you can also provide the configuration via Environment Variables:  
@@ -154,13 +154,13 @@ TIMESTAMP_MODE=[RFC3161|Authenticode]
 
 <details>
 
-<summary>Code Signing using Azure Trusted Signing</summary>
+<summary>Code Signing using Azure Artifact Signing</summary>
 
-### Code Signing using `ats-codesign.sh`
+### Code Signing using `aas-codesign.sh`
 
-The included Shell Script `ats-codesign.sh` is a helper script which will
+The included Shell Script `aas-codesign.sh` is a helper script which will
 - pick up the configuration from Environment Variables or the mounted `.json` files
-- perform the Windows Code Signing using [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing) with [jsign](https://github.com/ebourg/jsign)
+- perform the Windows Code Signing using [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/) with [jsign](https://github.com/ebourg/jsign)
 
 #### Example: Docker Run - CodeSign
 
@@ -168,17 +168,17 @@ The following example will
 - run the Docker Image [jotools/codesign](https://hub.docker.com/r/jotools/codesign)
 - use configuration from `.json` files stored on the host machine
 - mount a folder on the host machine into `/data`
-- use entry point `ats-codesign.sh`
+- use entry point `aas-codesign.sh`
 - codesign all `.exe`'s and `.dll`'s in `/data` *(recursively)*
 
 ```
 docker run \
     --rm \
-    -v /local/path/to/acs.json:/etc/ats-codesign/acs.json \
-    -v /local/path/to/azure.json:/etc/ats-codesign/azure.json \
+    -v /local/path/to/acs.json:/etc/aas-codesign/acs.json \
+    -v /local/path/to/azure.json:/etc/aas-codesign/azure.json \
     -v /local/path/to/build-folder:/data \
     -w /data \
-    --entrypoint ats-codesign.sh \
+    --entrypoint aas-codesign.sh \
     jotools/codesign \
     "./**/*.exe" "./**/*.dll"
 ```
@@ -190,11 +190,11 @@ The same example, but
 docker run \
     --rm \
     -e TIMESTAMP_SERVER=http://timestamp.digicert.com \
-    -v /local/path/to/acs.json:/etc/ats-codesign/acs.json \
-    -v /local/path/to/azure.json:/etc/ats-codesign/azure.json \
+    -v /local/path/to/acs.json:/etc/aas-codesign/acs.json \
+    -v /local/path/to/azure.json:/etc/aas-codesign/azure.json \
     -v /local/path/to/build-folder:/data \
     -w /data \
-    --entrypoint ats-codesign.sh \
+    --entrypoint aas-codesign.sh \
     jotools/codesign \
     "./**/*.exe" "./**/*.dll"
 ```
@@ -207,8 +207,8 @@ The following example will
 - run the Docker Container interactively *(removing it after)*
   - use entry point `sh`
   - you then can manually sign files, e.g.:  
-    `ats-codesign.sh "./**/*.exe" "./**/*.dll"`  
-    `ats-codesign.sh myapp.exe mylib.dll`
+    `aas-codesign.sh "./**/*.exe" "./**/*.dll"`  
+    `aas-codesign.sh myapp.exe mylib.dll`
 
 ```
 docker run \
@@ -231,16 +231,16 @@ The following example will
 - run the Docker Container interactively *(removing it after)*
   - use entry point `sh`
   - you then can manually sign files, e.g.:  
-    `ats-codesign.sh "./**/*.exe" "./**/*.dll"`  
-    `ats-codesign.sh myapp.exe mylib.dll`
+    `aas-codesign.sh "./**/*.exe" "./**/*.dll"`  
+    `aas-codesign.sh myapp.exe mylib.dll`
 
 ```
 docker run \
     --rm \
     -it \
     --entrypoint sh \
-    -v /local/path/to/acs.json:/etc/ats-codesign/acs.json \
-    -v /local/path/to/azure.json:/etc/ats-codesign/azure.json \
+    -v /local/path/to/acs.json:/etc/aas-codesign/acs.json \
+    -v /local/path/to/azure.json:/etc/aas-codesign/azure.json \
     -v /local/path/to/build-folder:/data \
     jotools/codesign
 ```
@@ -304,7 +304,7 @@ docker run \
 
 ## Security Warning
 
-The provided Scripts `ats-codesign.sh` and `pfx-codesign.sh` allow retrieving sensitive information *(such as a Client Secret or Certificate Password)* from a plaintext `.json` configuration file, which is **not secure**.
+The provided Scripts `aas-codesign.sh` and `pfx-codesign.sh` allow retrieving sensitive information *(such as a Client Secret or Certificate Password)* from a plaintext `.json` configuration file, which is **not secure**.
 
 That's just intended for demonstration and testing purposes only. If using similar logic in a production environment, implement a secure method for managing secrets to protect sensitive information.
 

@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # ENVIRONMENT
 ENV TZ=Etc/UTC \
 	DEBIAN_FRONTEND=noninteractive \
-	JSIGN_VERSION=7.1
+	JSIGN_VERSION=7.4
 
 #INSTALL REQUIRED LIBRARIES
 ARG DEBIAN_FRONTEND=noninteractive
@@ -33,11 +33,11 @@ RUN curl -sL https://github.com/ebourg/jsign/releases/download/${JSIGN_VERSION}/
 COPY ./scripts /usr/local/bin
 
 # CHMOD JOTOOLS SCRIPTS EXECUTABLE
-RUN chmod 755 /usr/local/bin/ats-codesign.sh \
+RUN chmod 755 /usr/local/bin/aas-codesign.sh \
 	&& chmod 755 /usr/local/bin/pfx-codesign.sh
 
 #PREPARE CONTAINER
-RUN mkdir -p /etc/ats-codesign \
+RUN mkdir -p /etc/aas-codesign \
 	&& mkdir -p /etc/pfx-codesign \
 	&& mkdir -p /data
 WORKDIR /data

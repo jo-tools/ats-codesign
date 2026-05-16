@@ -10,6 +10,7 @@ Begin DesktopWindow Window1
    HasFullScreenButton=   False
    HasMaximizeButton=   False
    HasMinimizeButton=   True
+   HasTitleBar     =   True
    Height          =   500
    ImplicitInstance=   True
    MacProcID       =   0
@@ -20,7 +21,7 @@ Begin DesktopWindow Window1
    MinimumHeight   =   500
    MinimumWidth    =   600
    Resizeable      =   False
-   Title           =   "ATS CodeSign | InnoSetup | Docker"
+   Title           =   "AAS CodeSign | InnoSetup | Docker"
    Type            =   0
    Visible         =   True
    Width           =   600
@@ -71,7 +72,7 @@ Begin DesktopWindow Window1
       TabIndex        =   1
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "ATS CodeSign | InnoSetup"
+      Text            =   "AAS CodeSign | InnoSetup"
       TextAlignment   =   0
       TextColor       =   &c0072D800
       Tooltip         =   "#kURL_Repository"
@@ -262,7 +263,7 @@ Begin DesktopWindow Window1
       Visible         =   True
       Width           =   250
    End
-   Begin DesktopLabel labLinkATS
+   Begin DesktopLabel labLinkAAS
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -284,17 +285,17 @@ Begin DesktopWindow Window1
       TabIndex        =   11
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "Azure Trusted Signing"
+      Text            =   "Azure Artifact Signing"
       TextAlignment   =   1
       TextColor       =   &c0072CE00
-      Tooltip         =   "https://azure.microsoft.com/en-us/products/trusted-signing"
+      Tooltip         =   "https://azure.microsoft.com/en-us/products/artifact-signing/"
       Top             =   330
       Transparent     =   False
       Underline       =   True
       Visible         =   True
       Width           =   250
    End
-   Begin DesktopLabel labLinkDockerHubAtsCodesign
+   Begin DesktopLabel labLinkDockerHubAasCodesign
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -412,10 +413,10 @@ Begin DesktopWindow Window1
       TabIndex        =   12
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "[Microsoft] Quickstart: Set up Trusted Signing"
+      Text            =   "[Microsoft] Quickstart: Set up Artifact Signing"
       TextAlignment   =   1
       TextColor       =   &c0072CE00
-      Tooltip         =   "https://learn.microsoft.com/en-us/azure/trusted-signing/quickstart"
+      Tooltip         =   "https://learn.microsoft.com/en-us/azure/artifact-signing/quickstart"
       Top             =   330
       Transparent     =   False
       Underline       =   True
@@ -444,7 +445,7 @@ Begin DesktopWindow Window1
       TabIndex        =   14
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "[Melatonin] Code signing with ATS"
+      Text            =   "[Melatonin] Code signing with AAS"
       TextAlignment   =   1
       TextColor       =   &c0072CE00
       Tooltip         =   "https://melatonin.dev/blog/code-signing-on-windows-with-azure-trusted-signing/"
@@ -476,7 +477,7 @@ Begin DesktopWindow Window1
       TabIndex        =   16
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "[KoalaDocs] ATS | signtool.exe"
+      Text            =   "[KoalaDocs] AAS | signtool.exe"
       TextAlignment   =   1
       TextColor       =   &c0072CE00
       Tooltip         =   "https://github.com/koaladsp/KoalaDocs/blob/master/azure-code-signing-for-plugin-developers.md#232-preparing-signtoolexe"
@@ -536,7 +537,7 @@ Begin DesktopWindow Window1
       TabIndex        =   7
       TabPanelIndex   =   0
       TabStop         =   True
-      Text            =   "This Xojo Example Project includes the Post Build Scripts ""CodeSign"", ""CreateZIP"" and ""InnoSetup"" which codesigns the Windows builds using Azure Trusted Signing (or a codesign certificate .pfx), creates a .zip and finally creates a codesigned Windows Installer using ""InnoSetup"".\n\nIt uses Docker Containers to perform the codesigning using jsign and running InnoSetup.\n\nThis allows the Windows application to be built, codesigned, zipped and creating a Windows Installer with the Xojo IDE running on all Windows, macOS or Linux."
+      Text            =   "This Xojo Example Project includes the Post Build Scripts ""CodeSign"", ""CreateZIP"" and ""InnoSetup"" which codesigns the Windows builds using Azure Artifact Signing (or a codesign certificate .pfx), creates a .zip and finally creates a codesigned Windows Installer using ""InnoSetup"".\n\nIt uses Docker Containers to perform the codesigning using jsign and running InnoSetup.\n\nThis allows the Windows application to be built, codesigned, zipped and creating a Windows Installer with the Xojo IDE running on all Windows, macOS or Linux."
       TextAlignment   =   0
       TextColor       =   &c000000
       Tooltip         =   ""
@@ -546,7 +547,7 @@ Begin DesktopWindow Window1
       Visible         =   True
       Width           =   560
    End
-   Begin DesktopLabel labLinkDockerHubAtsInnosetup
+   Begin DesktopLabel labLinkDockerHubAasInnosetup
       AllowAutoDeactivate=   True
       Bold            =   False
       Enabled         =   True
@@ -620,7 +621,7 @@ End
 	#tag Constant, Name = kURL_PayPal, Type = String, Dynamic = False, Default = \"https://paypal.me/jotools", Scope = Private
 	#tag EndConstant
 
-	#tag Constant, Name = kURL_Repository, Type = String, Dynamic = False, Default = \"https://github.com/jo-tools/ats-codesign-innosetup", Scope = Private
+	#tag Constant, Name = kURL_Repository, Type = String, Dynamic = False, Default = \"https://github.com/jo-tools/aas-codesign-innosetup", Scope = Private
 	#tag EndConstant
 
 
@@ -824,7 +825,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events labLinkATS
+#tag Events labLinkAAS
 	#tag Event
 		Sub MouseExit()
 		  Me.MouseCursor = Nil
@@ -852,7 +853,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events labLinkDockerHubAtsCodesign
+#tag Events labLinkDockerHubAasCodesign
 	#tag Event
 		Sub MouseExit()
 		  Me.MouseCursor = Nil
@@ -974,7 +975,7 @@ End
 		End Sub
 	#tag EndEvent
 #tag EndEvents
-#tag Events labLinkDockerHubAtsInnosetup
+#tag Events labLinkDockerHubAasInnosetup
 	#tag Event
 		Sub MouseExit()
 		  Me.MouseCursor = Nil
@@ -1031,6 +1032,14 @@ End
 	#tag EndEvent
 #tag EndEvents
 #tag ViewBehavior
+	#tag ViewProperty
+		Name="HasTitleBar"
+		Visible=true
+		Group="Frame"
+		InitialValue="True"
+		Type="Boolean"
+		EditorType=""
+	#tag EndViewProperty
 	#tag ViewProperty
 		Name="Name"
 		Visible=true

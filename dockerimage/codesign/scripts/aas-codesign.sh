@@ -1,13 +1,13 @@
 #! /bin/bash
 #
-# ats-codesign.sh [FILE] [PATTERN] [@FILELIST]...
+# aas-codesign.sh [FILE] [PATTERN] [@FILELIST]...
 
 JSIGN_PARAMETERS=("$@")
 
 echo "Setting up Environment"
 
-AZURE_JSON="/etc/ats-codesign/azure.json"
-ACS_JSON="/etc/ats-codesign/acs.json"
+AZURE_JSON="/etc/aas-codesign/azure.json"
+ACS_JSON="/etc/aas-codesign/acs.json"
 
 if [ -z "${AZURE_TENANT_ID}" ]; then
 	AZURE_TENANT_ID=$( [ -f ${AZURE_JSON} ] && cat ${AZURE_JSON} | jq -r '.TenantId')
@@ -43,15 +43,15 @@ echo "Checking Environment"
 ENV_CHECK=1
 if [ -z "${AZURE_TENANT_ID}" ] || [ -z "${AZURE_CLIENT_ID}" ] || [ -z "${AZURE_CLIENT_SECRET}" ]; then
 	echo "Environment variables not set: AZURE_TENANT_ID, AZURE_CLIENT_ID, AZURE_CLIENT_SECRET"
-	if [ ! -f /etc/ats-codesign/azure.json ]; then
-		echo "File is not mounted: /etc/ats-codesign/azure.json"
+	if [ ! -f /etc/aas-codesign/azure.json ]; then
+		echo "File is not mounted: /etc/aas-codesign/azure.json"
 	fi
 	ENV_CHECK=0
 fi
 if [ -z "${ACS_ACCOUNT_NAME}" ] || [ -z "${ACS_CERTIFICATE_PROFILE_NAME}" ] || [ -z "${ACS_ENDPOINT}" ]; then
 	echo "Environment variables not set: ACS_ACCOUNT_NAME, ACS_CERTIFICATE_PROFILE_NAME, ACS_ENDPOINT"
-	if [ ! -f /etc/ats-codesign/acs.json ]; then
-		echo "File is not mounted: /etc/ats-codesign/acs.json"
+	if [ ! -f /etc/aas-codesign/acs.json ]; then
+		echo "File is not mounted: /etc/aas-codesign/acs.json"
 	fi
 	ENV_CHECK=0
 fi
@@ -67,7 +67,7 @@ if [ ${ENV_CHECK} -ne 1 ]; then
 	echo ""
 	echo "Documentation: see 'Command Line Tool: [FILE] [PATTERN] [@FILELIST]...'"
 	echo "               https://ebourg.github.io/jsign/"
-	echo "Usage:         ats-codesign.sh [FILE] [PATTERN] [@FILELIST]..."
+	echo "Usage:         aas-codesign.sh [FILE] [PATTERN] [@FILELIST]..."
 	exit 10
 fi
 

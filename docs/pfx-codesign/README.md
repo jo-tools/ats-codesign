@@ -9,7 +9,7 @@ Template configuration files for Docker Hub: [`jotools/codesign`](https://hub.do
 
 ## Configuration: Xojo example project
 
-The Xojo example project `ATS CodeSign InnoSetup.xojo_project` performs codesigning in it's Post Build Scripts.
+The Xojo example project `AAS CodeSign InnoSetup.xojo_project` performs codesigning in it's Post Build Scripts.
 
 To enable that functionality the following configuration is required.
 

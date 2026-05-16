@@ -16,16 +16,16 @@
 				End
 				Begin IDEScriptBuildStep CodeSign , AppliesTo = 2, Architecture = 0, Target = 0
 					'*********************************************************************************************
-					' CodeSign | Azure Trusted Signing | PFX | Docker
+					' CodeSign | Azure Artifact Signing | PFX | Docker
 					'*********************************************************************************************
-					' https://github.com/jo-tools/ats-codesign-innosetup
+					' https://github.com/jo-tools/aas-codesign-innosetup
 					'*********************************************************************************************
 					' Requirements
 					'*********************************************************************************************
 					' 1.  Set up Codesigning with one of the following
-					' 1.1 Azure Trusted Signing
-					'     Requires acs.json and azure.json in ~/.ats-codesign
-					'     Strongly recommends ats-codesign-credential.sh in ~/.ats-codesign
+					' 1.1 Azure Artifact Signing
+					'     Requires acs.json and azure.json in ~/.aas-codesign
+					'     Strongly recommends aas-codesign-credential.sh in ~/.aas-codesign
 					' 1.2 CodeSign Certificate .pfx
 					'     Requires pfx.json and certificate.pfx in ~/.pfx-codesign
 					'     Strongly recommends pfx-codesign-credential.sh in ~/.pfx-codesign
@@ -115,8 +115,8 @@
 					'      InnoSetup includes codesign, too. So you don't need having two different Docker Images taking up space on your machine.
 					Var sDOCKER_IMAGE As String = "jotools/codesign" 'or: "jotools/innosetup"
 					
-					Var sFILE_ACS_JSON As String = "" 'will be searched in ~/.ats-codesign
-					Var sFILE_AZURE_JSON As String = "" 'will be searched in ~/.ats-codesign
+					Var sFILE_ACS_JSON As String = "" 'will be searched in ~/.aas-codesign
+					Var sFILE_AZURE_JSON As String = "" 'will be searched in ~/.aas-codesign
 					Var sFILE_PFX_JSON As String = "" 'will be searched in ~/.pfx-codesign
 					Var sFILE_PFX_CERTIFICATE As String = "" 'will be searched in ~/.pfx-codesign
 					Var sBUILD_LOCATION As String = CurrentBuildLocation
@@ -124,15 +124,15 @@
 					'Check Environment
 					Var sDOCKER_EXE As String = "docker"
 					If TargetWindows Then 'Xojo IDE is running on Windows
-					sFILE_ACS_JSON = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\acs.json echo %USERPROFILE%\.ats-codesign\acs.json").Trim
-					sFILE_AZURE_JSON = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\azure.json echo %USERPROFILE%\.ats-codesign\azure.json").Trim
+					sFILE_ACS_JSON = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\acs.json echo %USERPROFILE%\.aas-codesign\acs.json").Trim
+					sFILE_AZURE_JSON = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\azure.json echo %USERPROFILE%\.aas-codesign\azure.json").Trim
 					sFILE_PFX_JSON = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\pfx.json echo %USERPROFILE%\.pfx-codesign\pfx.json").Trim
 					sFILE_PFX_CERTIFICATE = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\certificate.pfx echo %USERPROFILE%\.pfx-codesign\certificate.pfx").Trim
 					ElseIf TargetMacOS Or TargetLinux Then 'Xojo IDE running on macOS or Linux
 					sDOCKER_EXE = DoShellCommand("[ -f /usr/local/bin/docker ] && echo /usr/local/bin/docker").Trim
 					If (sDOCKER_EXE = "") Then sDOCKER_EXE = DoShellCommand("[ -f /snap/bin/docker ] && echo /snap/bin/docker").Trim
-					sFILE_ACS_JSON = DoShellCommand("[ -f ~/.ats-codesign/acs.json ] && echo ~/.ats-codesign/acs.json").Trim
-					sFILE_AZURE_JSON = DoShellCommand("[ -f ~/.ats-codesign/azure.json ] && echo ~/.ats-codesign/azure.json").Trim
+					sFILE_ACS_JSON = DoShellCommand("[ -f ~/.aas-codesign/acs.json ] && echo ~/.aas-codesign/acs.json").Trim
+					sFILE_AZURE_JSON = DoShellCommand("[ -f ~/.aas-codesign/azure.json ] && echo ~/.aas-codesign/azure.json").Trim
 					sBUILD_LOCATION = sBUILD_LOCATION.ReplaceAll("\", "") 'don't escape Path
 					sFILE_PFX_JSON = DoShellCommand("[ -f ~/.pfx-codesign/pfx.json ] && echo ~/.pfx-codesign/pfx.json").Trim
 					sFILE_PFX_CERTIFICATE = DoShellCommand("[ -f ~/.pfx-codesign/certificate.pfx ] && echo ~/.pfx-codesign/certificate.pfx").Trim
@@ -141,13 +141,13 @@
 					Return
 					End If
 					
-					Var bCODESIGN_ATS As Boolean = (sFILE_ACS_JSON <> "") And (sFILE_AZURE_JSON <> "")
+					Var bCODESIGN_AAS As Boolean = (sFILE_ACS_JSON <> "") And (sFILE_AZURE_JSON <> "")
 					Var bCODESIGN_PFX As Boolean = (sFILE_PFX_JSON <> "") And (sFILE_PFX_CERTIFICATE <> "")
 					
-					If (Not bCODESIGN_ATS) And (Not bCODESIGN_PFX) Then
+					If (Not bCODESIGN_AAS) And (Not bCODESIGN_PFX) Then
 					If (Not bSILENT) Then
 					Print "Codesign:" + EndOfLine + _
-					"acs.json and azure.json not found in [UserHome]-[.ats-codesign]-[acs|azure.json]" + EndOfLine + _
+					"acs.json and azure.json not found in [UserHome]-[.aas-codesign]-[acs|azure.json]" + EndOfLine + _
 					"pfx.json and certificate.pfx not found in [UserHome]-[.pfx-codesign]-[pfx.json|certificate.pfx]"
 					End If
 					Return
@@ -168,16 +168,16 @@
 					End If
 					
 					'Get Credential from Secure Storage
-					Var bENV_ATS_CREDENTIAL As Boolean
+					Var bENV_AAS_CREDENTIAL As Boolean
 					Var bENV_PFX_CREDENTIAL As Boolean
 					
-					If bCODESIGN_ATS Or bCODESIGN_PFX Then
+					If bCODESIGN_AAS Or bCODESIGN_PFX Then
 					Var SFILE_CREDENTIAL As String
 					Var sCREDENTIAL_COMMAND As String
 					
 					If TargetWindows Then 'Xojo IDE is running on Windows
-					If bCODESIGN_ATS Then
-					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\ats-codesign-credential.ps1 echo %USERPROFILE%\.ats-codesign\ats-codesign-credential.ps1").Trim
+					If bCODESIGN_AAS Then
+					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\aas-codesign-credential.ps1 echo %USERPROFILE%\.aas-codesign\aas-codesign-credential.ps1").Trim
 					ElseIf bCODESIGN_PFX Then
 					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\pfx-codesign-credential.ps1 echo %USERPROFILE%\.pfx-codesign\pfx-codesign-credential.ps1").Trim
 					End If
@@ -185,8 +185,8 @@
 					sCREDENTIAL_COMMAND = "powershell """ + SFILE_CREDENTIAL + """"
 					End If
 					ElseIf TargetMacOS Or TargetLinux Then 'Xojo IDE running on macOS or Linux
-					If bCODESIGN_ATS Then
-					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.ats-codesign/ats-codesign-credential.sh ] && echo ~/.ats-codesign/ats-codesign-credential.sh").Trim
+					If bCODESIGN_AAS Then
+					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.aas-codesign/aas-codesign-credential.sh ] && echo ~/.aas-codesign/aas-codesign-credential.sh").Trim
 					ElseIf bCODESIGN_PFX Then
 					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.pfx-codesign/pfx-codesign-credential.sh ] && echo ~/.pfx-codesign/pfx-codesign-credential.sh").Trim
 					End If
@@ -201,14 +201,14 @@
 					Var iCREDENTIAL_RESULT As Integer
 					Var sCREDENTIAL As String = DoShellCommand(sCREDENTIAL_COMMAND, 0, iCREDENTIAL_RESULT).Trim
 					If (iCREDENTIAL_RESULT <> 0) Or (sCREDENTIAL = "") Then
-					Print  "Codesign: Could not retrieve " + If(bCODESIGN_ATS, "ATS", "PFX") + " Credential"
+					Print  "Codesign: Could not retrieve " + If(bCODESIGN_AAS, "AAS", "PFX") + " Credential"
 					Return
 					End If
 					
 					'Use Environment Variable
-					If bCODESIGN_ATS Then
+					If bCODESIGN_AAS Then
 					EnvironmentVariable("AZURE_CLIENT_SECRET") = sCREDENTIAL
-					bENV_ATS_CREDENTIAL = true
+					bENV_AAS_CREDENTIAL = true
 					ElseIf bCODESIGN_PFX Then
 					EnvironmentVariable("PFX_PASSWORD") = sCREDENTIAL
 					bENV_PFX_CREDENTIAL = true
@@ -219,15 +219,15 @@
 					'CodeSign in Docker Container
 					Var sSIGN_COMMAND As String
 					Var sSIGN_ENTRYPOINT As String
-					If bCODESIGN_ATS Then
-					'CodeSign using Azure Trusted Signing
-					sSIGN_ENTRYPOINT = "ats-codesign.sh"
+					If bCODESIGN_AAS Then
+					'CodeSign using Azure Artifact Signing
+					sSIGN_ENTRYPOINT = "aas-codesign.sh"
 					sSIGN_COMMAND = _
 					sDOCKER_EXE + " run " + _
 					"--rm " + _
-					"-v """ + sFILE_ACS_JSON + """:/etc/ats-codesign/acs.json " + _
-					"-v """ + sFILE_AZURE_JSON + """:/etc/ats-codesign/azure.json " + _
-					If(bENV_ATS_CREDENTIAL, "-e AZURE_CLIENT_SECRET ", "") + _
+					"-v """ + sFILE_ACS_JSON + """:/etc/aas-codesign/acs.json " + _
+					"-v """ + sFILE_AZURE_JSON + """:/etc/aas-codesign/azure.json " + _
+					If(bENV_AAS_CREDENTIAL, "-e AZURE_CLIENT_SECRET ", "") + _
 					"-v """ + sBUILD_LOCATION + """:/data " + _
 					"-w /data " + _
 					"--entrypoint " + sSIGN_ENTRYPOINT + " " + _
@@ -388,17 +388,17 @@
 				End
 				Begin IDEScriptBuildStep InnoSetup , AppliesTo = 2, Architecture = 0, Target = 0
 					'*********************************************************************************************
-					' InnoSetup | Azure Trusted Signing | PFX | Docker
+					' InnoSetup | Azure Artifact Signing | PFX | Docker
 					'*********************************************************************************************
-					' https://github.com/jo-tools/ats-codesign-innosetup
+					' https://github.com/jo-tools/aas-codesign-innosetup
 					'*********************************************************************************************
 					' Requirements
 					'*********************************************************************************************
 					' 1.  Optional: Set up Codesigning with one of the following
 					'     (only if you want a codesigned Installer)
-					' 1.1 Azure Trusted Signing
-					'     Requires acs.json and azure.json in ~/.ats-codesign
-					'     Strongly recommends ats-codesign-credential.sh in ~/.ats-codesign
+					' 1.1 Azure Artifact Signing
+					'     Requires acs.json and azure.json in ~/.aas-codesign
+					'     Strongly recommends aas-codesign-credential.sh in ~/.aas-codesign
 					' 1.2 CodeSign Certificate .pfx
 					'     Requires pfx.json and certificate.pfx in ~/.pfx-codesign
 					'     Strongly recommends pfx-codesign-credential.sh in ~/.pfx-codesign
@@ -578,8 +578,8 @@
 					
 					'Variables for Docker
 					Var sDOCKER_IMAGE As String = "jotools/innosetup"
-					Var sFILE_ACS_JSON As String = "" 'will be searched in ~/.ats-codesign
-					Var sFILE_AZURE_JSON As String = "" 'will be searched in ~/.ats-codesign
+					Var sFILE_ACS_JSON As String = "" 'will be searched in ~/.aas-codesign
+					Var sFILE_AZURE_JSON As String = "" 'will be searched in ~/.aas-codesign
 					Var sFILE_PFX_JSON As String = "" 'will be searched in ~/.pfx-codesign
 					Var sFILE_PFX_CERTIFICATE As String = "" 'will be searched in ~/.pfx-codesign
 					Var sPROJECT_PATH As String
@@ -592,8 +592,8 @@
 					sPROJECT_PATH = DoShellCommand("echo %PROJECT_PATH%", 0).Trim
 					sCHAR_FOLDER_SEPARATOR = "\"
 					If bCODESIGN_ENABLED Then
-					sFILE_ACS_JSON = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\acs.json echo %USERPROFILE%\.ats-codesign\acs.json").Trim
-					sFILE_AZURE_JSON = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\azure.json echo %USERPROFILE%\.ats-codesign\azure.json").Trim
+					sFILE_ACS_JSON = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\acs.json echo %USERPROFILE%\.aas-codesign\acs.json").Trim
+					sFILE_AZURE_JSON = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\azure.json echo %USERPROFILE%\.aas-codesign\azure.json").Trim
 					sFILE_PFX_JSON = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\pfx.json echo %USERPROFILE%\.pfx-codesign\pfx.json").Trim
 					sFILE_PFX_CERTIFICATE = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\certificate.pfx echo %USERPROFILE%\.pfx-codesign\certificate.pfx").Trim
 					End If
@@ -612,8 +612,8 @@
 					sDOCKER_EXE = DoShellCommand("[ -f /usr/local/bin/docker ] && echo /usr/local/bin/docker").Trim
 					If (sDOCKER_EXE = "") Then sDOCKER_EXE = DoShellCommand("[ -f /snap/bin/docker ] && echo /snap/bin/docker").Trim
 					If bCODESIGN_ENABLED Then
-					sFILE_ACS_JSON = DoShellCommand("[ -f ~/.ats-codesign/acs.json ] && echo ~/.ats-codesign/acs.json").Trim
-					sFILE_AZURE_JSON = DoShellCommand("[ -f ~/.ats-codesign/azure.json ] && echo ~/.ats-codesign/azure.json").Trim
+					sFILE_ACS_JSON = DoShellCommand("[ -f ~/.aas-codesign/acs.json ] && echo ~/.aas-codesign/acs.json").Trim
+					sFILE_AZURE_JSON = DoShellCommand("[ -f ~/.aas-codesign/azure.json ] && echo ~/.aas-codesign/azure.json").Trim
 					sFILE_PFX_JSON = DoShellCommand("[ -f ~/.pfx-codesign/pfx.json ] && echo ~/.pfx-codesign/pfx.json").Trim
 					sFILE_PFX_CERTIFICATE = DoShellCommand("[ -f ~/.pfx-codesign/certificate.pfx ] && echo ~/.pfx-codesign/certificate.pfx").Trim
 					End If
@@ -622,7 +622,7 @@
 					Return
 					End If
 					
-					Var bCODESIGN_ATS As Boolean = (sFILE_ACS_JSON <> "") And (sFILE_AZURE_JSON <> "")
+					Var bCODESIGN_AAS As Boolean = (sFILE_ACS_JSON <> "") And (sFILE_AZURE_JSON <> "")
 					Var bCODESIGN_PFX As Boolean = (sFILE_PFX_JSON <> "") And (sFILE_PFX_CERTIFICATE <> "")
 					
 					If (sPROJECT_PATH = "") Then
@@ -647,10 +647,10 @@
 					
 					Var bCODESIGN_AVAILABLE As Boolean
 					If bCODESIGN_ENABLED Then
-					bCODESIGN_AVAILABLE = bCODESIGN_ATS Or bCODESIGN_PFX
+					bCODESIGN_AVAILABLE = bCODESIGN_AAS Or bCODESIGN_PFX
 					If (Not bCODESIGN_AVAILABLE) And (Not bSILENT) Then
 					Print "InnoSetup:" + EndOfLine + _
-					"acs.json and azure.json not found in [UserHome]-[.ats-codesign]-[acs|azure.json]" + EndOfLine + _
+					"acs.json and azure.json not found in [UserHome]-[.aas-codesign]-[acs|azure.json]" + EndOfLine + _
 					"pfx.json and certificate.pfx not found in [UserHome]-[.pfx-codesign]-[pfx.json|certificate.pfx]" + EndOfLine + _
 					EndOfLine + _
 					"Proceeding without codesigning the windows installer"
@@ -682,27 +682,27 @@
 					'Run InnoSetup (and CodeSign) in Docker Container
 					Var sINNOSETUP_PARAMETERS() As String
 					
-					Var bENV_ATS_CREDENTIAL As Boolean
+					Var bENV_AAS_CREDENTIAL As Boolean
 					Var bENV_PFX_CREDENTIAL As Boolean
 					
 					'Enable Codesigning
 					If bCODESIGN_AVAILABLE Then
 					If (sFILE_ACS_JSON <> "") And (sFILE_AZURE_JSON <> "") Then
-					sINNOSETUP_PARAMETERS.Add("""/SATS=Z:/usr/local/bin/ats-codesign.bat $f""")
-					sINNOSETUP_PARAMETERS.Add("/DcsCodeSignATS")
+					sINNOSETUP_PARAMETERS.Add("""/SAAS=Z:/usr/local/bin/aas-codesign.bat $f""")
+					sINNOSETUP_PARAMETERS.Add("/DcsCodeSignAAS")
 					ElseIf (sFILE_PFX_JSON <> "") And (sFILE_PFX_CERTIFICATE <> "") Then
-					sINNOSETUP_PARAMETERS.Add("""/SATS=Z:/usr/local/bin/pfx-codesign.bat $f""")
-					sINNOSETUP_PARAMETERS.Add("/DcsCodeSignATS")
+					sINNOSETUP_PARAMETERS.Add("""/SAAS=Z:/usr/local/bin/pfx-codesign.bat $f""")
+					sINNOSETUP_PARAMETERS.Add("/DcsCodeSignAAS")
 					End If
 					
 					'Get Credential from Secure Storage
-					If bCODESIGN_ATS Or bCODESIGN_PFX Then
+					If bCODESIGN_AAS Or bCODESIGN_PFX Then
 					Var SFILE_CREDENTIAL As String
 					Var sCREDENTIAL_COMMAND As String
 					
 					If TargetWindows Then 'Xojo IDE is running on Windows
-					If bCODESIGN_ATS Then
-					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.ats-codesign\ats-codesign-credential.ps1 echo %USERPROFILE%\.ats-codesign\ats-codesign-credential.ps1").Trim
+					If bCODESIGN_AAS Then
+					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.aas-codesign\aas-codesign-credential.ps1 echo %USERPROFILE%\.aas-codesign\aas-codesign-credential.ps1").Trim
 					ElseIf bCODESIGN_PFX Then
 					SFILE_CREDENTIAL = DoShellCommand("if exist %USERPROFILE%\.pfx-codesign\pfx-codesign-credential.ps1 echo %USERPROFILE%\.pfx-codesign\pfx-codesign-credential.ps1").Trim
 					End If
@@ -710,8 +710,8 @@
 					sCREDENTIAL_COMMAND = "powershell """ + SFILE_CREDENTIAL + """"
 					End If
 					ElseIf TargetMacOS Or TargetLinux Then 'Xojo IDE running on macOS or Linux
-					If bCODESIGN_ATS Then
-					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.ats-codesign/ats-codesign-credential.sh ] && echo ~/.ats-codesign/ats-codesign-credential.sh").Trim
+					If bCODESIGN_AAS Then
+					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.aas-codesign/aas-codesign-credential.sh ] && echo ~/.aas-codesign/aas-codesign-credential.sh").Trim
 					ElseIf bCODESIGN_PFX Then
 					SFILE_CREDENTIAL = DoShellCommand("[ -f ~/.pfx-codesign/pfx-codesign-credential.sh ] && echo ~/.pfx-codesign/pfx-codesign-credential.sh").Trim
 					End If
@@ -726,14 +726,14 @@
 					Var iCREDENTIAL_RESULT As Integer
 					Var sCREDENTIAL As String = DoShellCommand(sCREDENTIAL_COMMAND, 0, iCREDENTIAL_RESULT).Trim
 					If (iCREDENTIAL_RESULT <> 0) Or (sCREDENTIAL = "") Then
-					Print  "InnoSetup: Could not retrieve " + If(bCODESIGN_ATS, "ATS", "PFX") + " Credential"
+					Print  "InnoSetup: Could not retrieve " + If(bCODESIGN_AAS, "AAS", "PFX") + " Credential"
 					Return
 					End If
 					
 					'Use Environment Variable
-					If bCODESIGN_ATS Then
+					If bCODESIGN_AAS Then
 					EnvironmentVariable("AZURE_CLIENT_SECRET") = sCREDENTIAL
-					bENV_ATS_CREDENTIAL = true
+					bENV_AAS_CREDENTIAL = true
 					ElseIf bCODESIGN_PFX Then
 					EnvironmentVariable("PFX_PASSWORD") = sCREDENTIAL
 					bENV_PFX_CREDENTIAL = true
@@ -778,9 +778,9 @@
 					Var sINNOSETUP_COMMAND As String = _
 					sDOCKER_EXE + " run " + _
 					"--rm " + _
-					If(sFILE_ACS_JSON <> "", "-v """ + sFILE_ACS_JSON + """:/etc/ats-codesign/acs.json ", "") + _
-					If(sFILE_AZURE_JSON <> "", "-v """ + sFILE_AZURE_JSON + """:/etc/ats-codesign/azure.json ", "") + _
-					If(bENV_ATS_CREDENTIAL, "-e AZURE_CLIENT_SECRET ", "") + _
+					If(sFILE_ACS_JSON <> "", "-v """ + sFILE_ACS_JSON + """:/etc/aas-codesign/acs.json ", "") + _
+					If(sFILE_AZURE_JSON <> "", "-v """ + sFILE_AZURE_JSON + """:/etc/aas-codesign/azure.json ", "") + _
+					If(bENV_AAS_CREDENTIAL, "-e AZURE_CLIENT_SECRET ", "") + _
 					If(sFILE_PFX_JSON <> "", "-v """ + sFILE_PFX_JSON + """:/etc/pfx-codesign/pfx.json ", "") + _
 					If(sFILE_PFX_CERTIFICATE <> "", "-v """ + sFILE_PFX_CERTIFICATE + """:/etc/pfx-codesign/certificate.pfx ", "") + _
 					If(bENV_PFX_CREDENTIAL, "-e PFX_PASSWORD ", "") + _

@@ -9,8 +9,8 @@ ENV TZ=Etc/UTC \
 	DEBIAN_FRONTEND=noninteractive \
 	WINEARCH=win32 \
 	DISPLAY=:0 \
-	INNOSETUP_VERSION=6.4.3 \
-	JSIGN_VERSION=7.1
+	INNOSETUP_VERSION=6.7.1 \
+	JSIGN_VERSION=7.4
 
 # INSTALL WINE AND REQUIRED PACKAGES
 RUN dpkg --add-architecture i386 \
@@ -46,12 +46,12 @@ RUN mkdir -p /opt/bin \
 	&& echo 'Xvfb $DISPLAY &' >> ./wine-xvfb \
 	&& echo 'tokill=$!' >> ./wine-xvfb \
 	&& echo 'wine wineboot --init' >> ./wine-xvfb \
-	&& echo 'waitonprocess wineserver' >> ./wine-xvfb \
+	&& echo './waitonproc wineserver' >> ./wine-xvfb \
 	&& echo '"$@"' >> ./wine-xvfb \
 	&& echo 'retval=$?' >> ./wine-xvfb \
 	&& echo 'kill -15 $tokill' >> ./wine-xvfb \
 	&& echo 'wine wineboot --shutdown' >> ./wine-xvfb \
-	&& echo 'return $retval' >> ./wine-xvfb \
+	&& echo 'exit $retval' >> ./wine-xvfb \
 	&& chmod +x ./wine-xvfb
 
 # WINE: SHOW DOT FILES
@@ -59,7 +59,8 @@ RUN wine reg add 'HKEY_CURRENT_USER\Software\Wine' /v ShowDotFiles /d Y \
 	&& while [ ! -f ~/.wine/user.reg ]; do sleep 1; done
 
 # INSTALL INNOSETUP ON WINE
-RUN curl -sL https://files.jrsoftware.org/is/6/innosetup-${INNOSETUP_VERSION}.exe -o ./innosetup.exe \
+RUN INNOSETUP_TAG=$(echo "$INNOSETUP_VERSION" | tr . _) \
+    && curl -sLf "https://github.com/jrsoftware/issrc/releases/download/is-${INNOSETUP_TAG}/innosetup-${INNOSETUP_VERSION}.exe" -o ./innosetup.exe \
     && ./wine-xvfb wine innosetup.exe /SP- /VERYSILENT /ALLUSERS /SUPPRESSMSGBOXES \
     && rm ./innosetup.exe
 
@@ -85,16 +86,16 @@ RUN curl -sL https://github.com/ebourg/jsign/releases/download/${JSIGN_VERSION}/
 COPY ./scripts /usr/local/bin
 
 # CHMOD JOTOOLS SCRIPTS EXECUTABLE
-RUN chmod 755 /usr/local/bin/ats-codesign.sh \
-	&& chmod 755 /usr/local/bin/ats-codesign-wine.sh \
-	&& chmod 755 /usr/local/bin/ats-codesign.bat \
+RUN chmod 755 /usr/local/bin/aas-codesign.sh \
+	&& chmod 755 /usr/local/bin/aas-codesign-wine.sh \
+	&& chmod 755 /usr/local/bin/aas-codesign.bat \
 	&& chmod 755 /usr/local/bin/pfx-codesign.sh \
 	&& chmod 755 /usr/local/bin/pfx-codesign-wine.sh \
 	&& chmod 755 /usr/local/bin/pfx-codesign.bat \
 	&& chmod 755 /usr/local/bin/iscc.sh
 
 # PREPARE CONTAINER
-RUN mkdir -p /etc/ats-codesign \
+RUN mkdir -p /etc/aas-codesign \
 	&& mkdir -p /etc/pfx-codesign \
 	&& mkdir -p /data
 WORKDIR /data

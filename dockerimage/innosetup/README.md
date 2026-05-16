@@ -5,10 +5,10 @@ The Docker Image is based on Debian and has the following components installed:
   - curl, jq, default-jdk, wine
 - [jsign](https://github.com/ebourg/jsign)  
   Authenticode signing tool in Java
-- `ats-codesign.sh` and `pfx-codesign.sh`  
-  Custom Shell Script used for Windows Code Signing using Azure Trusted Signing or a codesign certificate `.pfx`   
+- `aas-codesign.sh` and `pfx-codesign.sh`  
+  Custom Shell Script used for Windows Code Signing using Azure Artifact Signing or a codesign certificate `.pfx`   
   - Usage:  
-    `ats-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
+    `aas-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
     `pfx-codesign.sh [FILE] [PATTERN] [@FILELIST]...`  
   - Documentation: [jsign - Command Line Tool: `[FILE] [PATTERN] [@FILELIST]...`](https://ebourg.github.io/jsign/)
 - [InnoSetup](https://jrsoftware.org/isinfo.php)  
@@ -17,8 +17,8 @@ The Docker Image is based on Debian and has the following components installed:
   - This Docker Image includes helper scripts:
     - `iscc.sh '[InnoSetup Parameters]'`  
       Invokes InnoSetup running under wine
-    - `ats-codesign.bat` | `pfx-codesign.bat`  
-      Allows InnoSetup (Un)Installer to be codesigned using Azure Trusted Signing or a codesign certificate `.pfx`
+    - `aas-codesign.bat` | `pfx-codesign.bat`  
+      Allows InnoSetup (Un)Installer to be codesigned using Azure Artifact Signing or a codesign certificate `.pfx`
   - Documentation: [InnoSetup: Help file](https://jrsoftware.org/ishelp/)
 
 ### Build Docker Image
@@ -72,7 +72,7 @@ Please refer to the documentation of the included tools:
 
 ## Windows Code Signing
 
-You can use this Docker Image to do Windows Code Signing using [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing) or a codesign certificate `.pfx`.
+You can use this Docker Image to do Windows Code Signing using [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/) or a codesign certificate `.pfx`.
 
 Please refer to the examples of the Docker Image [`jotools/codesign`](https://hub.docker.com/r/jotools/codesign).
 
@@ -98,9 +98,9 @@ Please refer to the examples of the Docker Image [`jotools/codesign`](https://hu
 
 <details>
 
-<summary>Configuration: Azure Trusted Signing</summary>
+<summary>Configuration: Azure Artifact Signing</summary>
 
-### Azure Trusted Signing
+### Azure Artifact Signing
 
 #### Configuration
 
@@ -126,8 +126,8 @@ Create the following two `.json` files on your host machine:
 
 And mount them into the following location when running the Docker Container:  
 ```
-/etc/ats-codesign/azure.json
-/etc/ats-codesign/acs.json
+/etc/aas-codesign/azure.json
+/etc/aas-codesign/acs.json
 ```
 
 Instead of mounting the two `.json` files, you can also provide the configuration via Environment Variables:  
@@ -192,19 +192,19 @@ TIMESTAMP_MODE=[RFC3161|Authenticode]
 
 The included Shell Script `iscc.sh` is a helper script which will
 - run [InnoSetup](https://jrsoftware.org/isinfo.php) under [wine](https://www.winehq.org)
-- let you create a *(codesigned)* installer using the provided `ats-codesign.bat` or `pfx-codesign.bat`, which will call `ats-codesign.sh` or `pfx-codesign.sh` in the linux environment to
+- let you create a *(codesigned)* installer using the provided `aas-codesign.bat` or `pfx-codesign.bat`, which will call `aas-codesign.sh` or `pfx-codesign.sh` in the linux environment to
   - pick up the configuration from Environment Variables or the mounted `.json` files
-  - perform the Windows Code Signing using [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing) or a codesigning certificate with [jsign](https://github.com/ebourg/jsign)
+  - perform the Windows Code Signing using [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/) or a codesigning certificate with [jsign](https://github.com/ebourg/jsign)
 
 #### Example: Docker Run - InnoSetup
 
 <details>
 
-<summary>InnoSetup | Codesigning using Azure Trusted Signing</summary>
+<summary>InnoSetup | Codesigning using Azure Artifact Signing</summary>
 
 The following example will
 - run the Docker Image [`jotools/innosetup`](https://hub.docker.com/r/jotools/innosetup)
-- use Azure Trusted Signing configuration from `.json` files stored on the host machine
+- use Azure Artifact Signing configuration from `.json` files stored on the host machine
 - mount a folder on the host machine into `/data`  
   that should include
   - the application to be packaged in a windows installer
@@ -215,30 +215,30 @@ The following example will
 ```
 docker run \
     --rm \
-    -v /local/path/to/acs.json:/etc/ats-codesign/acs.json \
-    -v /local/path/to/azure.json:/etc/ats-codesign/azure.json \
+    -v /local/path/to/acs.json:/etc/aas-codesign/acs.json \
+    -v /local/path/to/azure.json:/etc/aas-codesign/azure.json \
     -v /local/path/to/build-folder:/data \
     -w /data \
     --entrypoint iscc.sh \
     jotools/innosetup \
-    '"/SCodeSignScript=Z:/usr/local/bin/ats-codesign.bat \$f" /O"Z:/data" /Dsourcepath="Z:/data/My Windows Application" "Z:/data/my-installer.iss"'
+    '"/SCodeSignScript=Z:/usr/local/bin/aas-codesign.bat \$f" /O"Z:/data" /Dsourcepath="Z:/data/My Windows Application" "Z:/data/my-installer.iss"'
 ```
 
 The following example will
-- use the locally stored Azure Trusted Signing configuration files `acs.json` and `azure.json`
+- use the locally stored Azure Artifact Signing configuration files `acs.json` and `azure.json`
 - mount a folder on the host machine into `/data`
 - run the Docker Container interactively *(removing it after)*
   - use entry point `sh`
   - you then can manually create a codesigned windows installer, e.g.:  
-    `iscc.sh '"/SCodeSignATS=Z:/usr/local/bin/ats-codesign.bat \$f" /O"Z:/data" /Dsourcepath="Z:/data/My Windows Application" "Z:/data/my-installer.iss"'`
+    `iscc.sh '"/SCodeSignAAS=Z:/usr/local/bin/aas-codesign.bat \$f" /O"Z:/data" /Dsourcepath="Z:/data/My Windows Application" "Z:/data/my-installer.iss"'`
 
 ```
 docker run \
     --rm \
     -it \
     --entrypoint sh \
-    -v /local/path/to/acs.json:/etc/ats-codesign/acs.json \
-    -v /local/path/to/azure.json:/etc/ats-codesign/azure.json \
+    -v /local/path/to/acs.json:/etc/aas-codesign/acs.json \
+    -v /local/path/to/azure.json:/etc/aas-codesign/azure.json \
     -v /local/path/to/build-folder:/data \
     jotools/innosetup
 ```
@@ -334,7 +334,7 @@ docker run \
 
 ## Security Warning
 
-The provided Scripts `ats-codesign.sh` and `pfx-codesign.sh` allow retrieving sensitive information *(such as a Client Secret or Certificate Password)* from a plaintext `.json` configuration file, which is **not secure**.
+The provided Scripts `aas-codesign.sh` and `pfx-codesign.sh` allow retrieving sensitive information *(such as a Client Secret or Certificate Password)* from a plaintext `.json` configuration file, which is **not secure**.
 
 That's just intended for demonstration and testing purposes only. If using similar logic in a production environment, implement a secure method for managing secrets to protect sensitive information.
 

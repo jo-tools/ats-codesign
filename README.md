@@ -1,5 +1,5 @@
-# ATS CodeSign | InnoSetup | Docker
-Azure Trusted Signing | CodeSign | InnoSetup | Docker | jsign
+# AAS CodeSign | InnoSetup | Docker
+Azure Artifact Signing | CodeSign | InnoSetup | Docker | jsign
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -8,7 +8,7 @@ Are you distributing Windows Software outside of the Microsoft Store? For your u
 
 ### Codesigning
 This example shows how to codesign using 
-- [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing)
+- [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/)
 - a codesigning certificate `.pfx`
 
 Codesigning is using [jsign](https://github.com/ebourg/jsign) in a Docker Container [`jotools/codesign`](https://hub.docker.com/r/jotools/codesign). This allows codesigning to be performed on a host machine running on either Windows, macOS or Linux.
@@ -16,8 +16,8 @@ Codesigning is using [jsign](https://github.com/ebourg/jsign) in a Docker Contai
 #### Requirements
 
 - Set up Codesigning with one of the following
-  - [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing)  
-    To [get you started]((https://learn.microsoft.com/en-us/azure/trusted-signing/quickstart)) have a look at the included [docs](./docs/).  
+  - [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/)  
+    To [get you started]((https://learn.microsoft.com/en-us/azure/artifact-signing/quickstart)) have a look at the included [docs](./docs/).  
     You'll find some useful links and archived Web content there.
   - Codesign certificate `.pfx`
 - Codesigning `.json`configuration files
@@ -49,8 +49,8 @@ Please refer to the [Documentation](./dockerimage/innosetup/) for the provided [
 
 ## Xojo Example Project
 
-This repository includes a Xojo Example Project `ATS CodeSign InnoSetup.xojo_project` which uses
-- a Post Build Script `CodeSign` to codesign the Windows builds using [Azure Trusted Signing](https://azure.microsoft.com/en-us/products/trusted-signing) *(or a codesign certificate `.pfx`)*
+This repository includes a Xojo Example Project `AAS CodeSign InnoSetup.xojo_project` which uses
+- a Post Build Script `CodeSign` to codesign the Windows builds using [Azure Artifact Signing](https://azure.microsoft.com/en-us/products/artifact-signing/) *(or a codesign certificate `.pfx`)*
   - using the Docker Container [`jotools/codesign`](https://hub.docker.com/r/jotools/codesign) to perform the codesigning using [jsign](https://github.com/ebourg/jsign)
 - a Post Build Script `CreateZIP` to package the built and codesigned application in a `.zip`
 - a Post Build Script `InnoSetup` to build a *(codesigned)* windows installer
@@ -60,8 +60,8 @@ This allows the Windows application to be built and codesigned with the Xojo IDE
 
 ### ScreenShots
 
-Xojo Example Project: ATS CodeSign | InnoSetup | Docker  
-![ScreenShot: Xojo Example Project: ATS CodeSign | InnoSetup | Docker](screenshots/xojo-example-project.png?raw=true)
+Xojo Example Project: AAS CodeSign | InnoSetup | Docker  
+![ScreenShot: Xojo Example Project: AAS CodeSign | InnoSetup | Docker](screenshots/xojo-example-project.png?raw=true)
 
 Code Signature *(Codesigned with Xojo IDE running on macOS)*
 ![ScreenShot: Code Signature - Codesigned with Xojo IDE running on macOS](screenshots/code-signature.png?raw=true)
@@ -74,21 +74,21 @@ Codesigned Windows Installer *(Created and codesigned with Xojo IDE running on m
 ### Requirements
 [Xojo](https://www.xojo.com/) is a rapid application development for Desktop, Web, Mobile & Raspberry Pi.  
 
-The Desktop application Xojo example project `ATS CodeSign InnoSetup.xojo_project` and its Post Build Scripts are using:
-- Xojo 2025r1.1
+The Desktop application Xojo example project `AAS CodeSign InnoSetup.xojo_project` and its Post Build Scripts are using:
+- Xojo 2026r1.2
 - API 2
 
 ### How to use in your own Xojo project?
 
 <details>
 
-<summary>CodeSign (Azure Trusted Signing | PFX)</summary>
+<summary>CodeSign (Azure Artifact Signing | PFX)</summary>
 
 1. Set up the local configuration files for CodeSign.  
    The Post Build Script(s) expect the following `.json` configuration file(s):
-   - [Azure Trusted Signing](./docs/ats-codesign/)
+   - [Azure Artifact Signing](./docs/aas-codesign/)
    - [Codesigning Certificate `.pfx`](./docs/pfx-codesign/)
-2. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `CodeSign` provided in `ATS CodeSign InnoSetup.xojo_project`
+2. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `CodeSign` provided in `AAS CodeSign InnoSetup.xojo_project`
 3. Make sure the Post Build Script `CodeSign` runs after the Step 'Windows: Build'
 4. Read the comments in the provided Post Build Script, modify it according to your needs  
    The default settings are:
@@ -105,8 +105,8 @@ The Desktop application Xojo example project `ATS CodeSign InnoSetup.xojo_projec
 
 <summary>CreateZIP</summary>
 
-1. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `CreateZIP` provided in `ATS CodeSign InnoSetup.xojo_project`
-2. Make sure this Post Build Script runs after the Step 'Windows: Build' *(and after `AzureTrustedSigning` to ensure you zip the codesigned application)*
+1. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `CreateZIP` provided in `AAS CodeSign InnoSetup.xojo_project`
+2. Make sure this Post Build Script runs after the Step 'Windows: Build' *(and after `CodeSign` to ensure you zip the codesigned application)*
 3. Read the comments in the provided Post Build Script, modify it according to your needs
 
 </details>
@@ -123,9 +123,9 @@ The Desktop application Xojo example project `ATS CodeSign InnoSetup.xojo_projec
 2. Optional *(only if you want to codesign the Windows Installers)*:  
    Set up the local configuration files for CodeSign.  
    The Post Build Script(s) expect the following `.json` configuration file(s):
-   - [Azure Trusted Signing](./docs/ats-codesign/)
+   - [Azure Artifact Signing](./docs/aas-codesign/)
    - [Codesigning Certificate `.pfx`](./docs/pfx-codesign/)
-3. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `InnoSetup` provided in `ATS CodeSign InnoSetup.xojo_project`
+3. Create a Post Build Script in your project and copy-and-paste the example Post Build Script `InnoSetup` provided in `AAS CodeSign InnoSetup.xojo_project`
 4. Make sure this Post Build Script runs after the Step 'Windows: Build' *(and after `CodeSign` to ensure you include the codesigned application in the windows installer)*
 5. Read the comments in the provided Post Build Script, modify it according to your needs, e.g.:
    -  change the value of `sAPP_PUBLISHER_URL` to your own website

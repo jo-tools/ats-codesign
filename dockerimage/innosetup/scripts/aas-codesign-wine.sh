@@ -1,7 +1,7 @@
 #! /bin/bash
 #
-# ats-innosetup-wine.sh [FILE (such as called from wine)]
-# This Script needs to be called from ats-codesign.bat.
+# aas-codesign-wine.sh [FILE (such as called from wine)]
+# This Script needs to be called from aas-codesign.bat.
 # The Batch Script wait for FILE.signed until it exits.
 
 # InnoSetup signed per file ($f)
@@ -22,11 +22,11 @@ fi
 # Replace backslashes with forward slashes
 FILE=${FILE//\\//}
 
-# Call ats-codesign.sh to sign the file
-/usr/local/bin/ats-codesign.sh "${FILE}"
-ATS_CODESIGN_RESULT=$?
+# Call aas-codesign.sh to sign the file
+/usr/local/bin/aas-codesign.sh "${FILE}"
+AAS_CODESIGN_RESULT=$?
 
 # Write temporary FILE.signed
 echo "signed" > "${FILE}.signed"
 
-exit $ATS_CODESIGN_RESULT
+exit $AAS_CODESIGN_RESULT
